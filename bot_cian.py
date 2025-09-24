@@ -45,15 +45,15 @@ async def price_command(message: Message, state: FSMContext):
         await message.answer('Нет новых объявлений')
     else:
         for ad in ads:
-            name, price, metro, link, date_add, payment = ad
+            name, price, metro, link, date_add, payment, time_metro, type_transportation = ad
             dt = datetime.strptime(date_add, "%Y-%m-%d %H:%M:%S")
             formatted_date = dt.strftime("%d.%m.%Y %H:%M")
             text = (
                 f"{name}\n"
                 f"Аренда: {price} ₽\n"
                 f"Оплата при заселении: {payment} ₽\n"
-                f"Метро: {metro}\n"
-                f"Добавлено: {formatted_date}\n"
+                f"Метро: {metro}, {type_transportation} {time_metro} мин.\n"
+                f"Обновлено: {formatted_date}\n"
                 f"{link}\n"
             )
             await message.answer(text)

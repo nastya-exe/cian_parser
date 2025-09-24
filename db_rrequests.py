@@ -3,20 +3,24 @@ from config import database_url
 
 
 # Добавление объявления в бд
-def save_info_db(ad, price, name_metro, link, date_add, payment):
+def save_info_db(ad, price, name_metro, link, date_add, payment, time_metro, type_transportation):
     db = sqlite3.connect(database_url)
     cursor = db.cursor()
 
     cursor.execute("""
-        INSERT INTO info_studios(name, price, name_metro, link, date_add, payment)
-        VALUES(?, ?, ?, ?, ?, ?)
+        INSERT INTO info_studios(name, price, name_metro, link, 
+            date_add, payment, time_metro, type_transportation)
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(link) DO UPDATE SET
             name=excluded.name,
             price=excluded.price,
             name_metro=excluded.name_metro,
+            link=excluded.link,
             date_add=excluded.date_add,
-            payment=excluded.payment
-    """, (ad, price, name_metro, link, date_add, payment))
+            payment=excluded.payment,
+            time_metro=excluded.time_metro,
+            type_transportation=excluded.type_transportation
+    """, (ad, price, name_metro, link, date_add, payment, time_metro, type_transportation))
 
     db.commit()
     db.close()
@@ -74,7 +78,7 @@ def find_ads(hour):
     cursor = db.cursor()
 
     cursor.execute(f"""
-		SELECT name, price, name_metro, link, date_add, payment
+		SELECT name, price, name_metro, link, date_add, payment, time_metro, type_transportation
 		FROM info_studios
 		WHERE DATETIME(date_add) >= DATETIME('now', '-{hour} hour', '+3 hour')
 		ORDER BY date_add
@@ -91,7 +95,7 @@ def find_ads_today():
     cursor = db.cursor()
 
     cursor.execute("""
-        SELECT name, price, name_metro, link, date_add, payment
+        SELECT name, price, name_metro, link, date_add, payment, time_metro, type_transportation
         FROM info_studios
         WHERE DATE(date_add) = DATE('now')
         ORDER BY date_add DESC
